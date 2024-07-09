@@ -19,14 +19,35 @@
         </header>
         <div class="title">Your Books</div>
         <div class="button">
-            <button id="addBookButton">Try me</button>
+            <button id="addBookButton"><i class="fa-solid fa-square-plus"></i></button>
         </div>
         <main id="books">
             <div class="book">
-                <h3>Title</h3>
-                <div>Author</div>
-                <div>23/55 pages read</div>
+                <div class="header">
+                    <h3>The Da Vinci Code</h3>
+                    <button><i class="fa-solid fa-circle-xmark"></i></button>
+
+                </div>
+                
+                <div class="author">Dan Brown</div>
+                <div class="pages">
+                    <i class="fa-regular fa-square-minus"></i>
+                    <div>
+                        <span class="page-start">23</span>
+                        <span>/</span>
+                        <span class="page-end">55</span>
+                    </div>
+                    <i class="fa-regular fa-square-plus"></i>
+                    <div class="read">pages read</div>
+                </div>
+                
+                <div class="button-container">
+                    <button class="edit"><i class="fa-regular fa-pen-to-square"></i></i></button>
+                    <button class="mark"><i class="fa-regular fa-envelope"></i></button>
+                </div>
+
             </div>
+
             <div class="book">2</div>
             <div class="book">3</div>
 
