@@ -9,10 +9,13 @@ html, body {
     height: 100%;
     box-sizing: border-box;
     font-family: 'Poppins', 'Times New Roman', Times, serif;
+    padding: 3rem 5rem;
 }
 
 .container {
-    padding: 2rem;
+    border-radius: 3%;
+    background-color: white;
+    padding: 3rem;
     display: grid;
     box-sizing: border-box;
     grid-template: 1fr min-content 5fr / 1fr 1fr;
@@ -25,6 +28,7 @@ header {
     align-self: center;
     display: grid;
     grid-template-columns: 1fr 3fr;
+    justify-content: center;
 }
 
 .title {
@@ -32,7 +36,8 @@ header {
 }
 
 .book-image {
-    height: 6rem;
+    height: 8rem;
+    
 }
 
 header > h1 {
@@ -50,6 +55,7 @@ main {
 }
 
 #books {
+    margin-top: 1rem;
     display: grid;
     width: 100%;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -59,12 +65,14 @@ main {
     
 }
 
+/* Styling for each book */
+
 #books .book {
     display: grid;
     grid-template-rows: repeat(3, min-content) 1fr;
     min-height: 200px;
-    border: 3px solid #1d3553;
-    border-bottom: 8px solid #1d3553;
+    border: 3px solid black;
+    border-bottom: 8px solid black;
     padding: 20px;
     border-radius: 10%;
 }
@@ -147,7 +155,62 @@ button {
 
 }
 
-
 .read {
     grid-area: 2 / 2 / 3 / 3;
+}
+
+.dialog-container {
+    display: grid;
+    grid-template: min-content repeat(5, 1fr) min-content / 1fr 2fr;
+    gap: 10px;
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+dialog {
+    border: 1px solid lightgray;
+    border-radius: 5%;
+    padding: 20px;
+
+}
+
+input {
+    height: min-content;
+}
+
+.dialog-title {
+    grid-area: 1 / 1 / 2 / 3;
+    margin: 0;
+}
+
+.reading-status {
+    grid-area: 6 / 1 / 7 / 3;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+}
+
+.bottom-buttons {
+    grid-area: 7 / 1 / 8 / 3;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+}
+
+.bottom-buttons > * {
+    border: 2px solid black;
+    border-radius: 5%;
+    padding: 10px;
+}
+
+#cancel:hover {
+    border: 2px solid red;
+}
+
+#add-book-submit:hover {
+    border: 2px solid rgb(227, 163, 68);
+
 }
