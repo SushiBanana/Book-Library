@@ -17,16 +17,19 @@ const bookNotReadCheck = document.getElementById('not-read');
 const cancel = document.getElementById("cancel")
 const addBookSubmit = document.getElementById("add-book-submit") // dialog submit button
 
+// books
+const addButtonCurrentPage = document.querySelectorAll(".book-page-plus")
+
 function Book(title, author, currentPage, totalPages) {
     this.title = title;
     this.author = author;
-    this.totalPages = totalPages;
     this.currentPage = currentPage;
+    this.totalPages = totalPages;
     this.isRead = isReadYet(currentPage, totalPages)
 }
 
 function printBook(book) {
-    console.log(`title: ${book.title}\nauthor: ${book.author}\ntotal pages: ${book.totalPages}\ncurrent pages: ${book.currentPage}`);
+    console.log(`title: ${book.title}\nauthor: ${book.author}\ncurrent pages: ${book.currentPage}\ntotal pages: ${book.totalPages}`);
 }
 
 function addBookToLibrary(book) {
@@ -47,10 +50,11 @@ function createBookObject() {
 
     validateInput();
 
-    const newBook = new Book(title, author, totalPages, currentPage);
+    const newBook = new Book(title, author, currentPage, totalPages);
 
     addBookToLibrary(newBook);
-    createBookContainer(newBook);
+    deleteAllBooks();
+    addBookToBooks(myLibrary);
 
 
     
@@ -106,7 +110,7 @@ function clearAllInputFields() {
     document.getElementById('current-page').value = '';
 }
 
-function createBookContainer(newBook) {
+function createBookContainer(newBook, index) {
     const book = document.createElement("div");
 
     const header = document.createElement("div");
@@ -141,6 +145,7 @@ function createBookContainer(newBook) {
 
 
     book.classList.add("book");
+    book.setAttribute("data-index", index);
     header.classList.add("header");
     h3.classList.add("book-title");
     buttonXMark.classList.add("xmark");
@@ -189,21 +194,37 @@ function createBookContainer(newBook) {
 
     header.appendChild(h3);
     header.appendChild(buttonXMark);
-    header.appendChild(bookAuthor);
-    header.appendChild(bookPages);
-    header.appendChild(buttonContainer);
 
     book.appendChild(header);
+    book.appendChild(bookAuthor);
+    book.appendChild(bookPages);
+    book.appendChild(buttonContainer);
 
     books.appendChild(book);
 
 }
 
 function addBookToBooks(myLibrary) {
+    for (let i = 0; i < myLibrary.length; i++) {
+        createBookContainer(myLibrary[i], i);
+    }
+}
 
+function incrementCurrentPage(index) {
+    myLibrary[index].currentPage++;
+}
+
+function decrementCurrentPage(index) {
+    myLibrary[index].currentPage--;
 }
 
 // Event Listeners
+
+function deleteAllBooks() {
+    while(books.firstChild) {
+        books.removeChild(books.firstChild);
+    }
+}
 
 
 addBookButton.addEventListener("click", () => {
@@ -225,3 +246,43 @@ bookReadCheck.addEventListener("click", isBookRead);
 
 bookNotReadCheck.addEventListener("click", isBookRead);
 
+
+books.addEventListener("click", function(event) {
+
+    if (event.target.classList.contains("fa-square-plus")) {
+
+        const book = event.target.closest(".book");
+
+        if (book) {
+            const index = book.getAttribute("data-index") ;
+            if (index !== null) {
+                const pageStart = book.querySelector(".page-start");
+                let currentPage = parseInt(pageStart.textContent, 10);
+                currentPage++;
+
+                pageStart.textContent = currentPage;
+                console.log("yes3");
+                incrementCurrentPage(index);
+                console.log(myLibrary);
+
+            }
+        }
+    
+    } else if (event.target.classList.contains("fa-square-minus")) {
+        const book = event.target.closest(".book");
+
+        if (book) {
+            const index = book.getAttribute("data-index") ;
+            if (index !== null) {
+                const pageStart = book.querySelector(".page-start");
+                let currentPage = parseInt(pageStart.textContent, 10);
+                currentPage--;
+
+                pageStart.textContent = currentPage;
+                console.log("yes3");
+                decrementCurrentPage(index);
+                console.log(myLibrary);
+            }
+        }
+    }
+})

@@ -77,7 +77,6 @@ main {
 }
 
 .button-container {
-    grid-area: 4 / 1 / 5 / 2;
     align-self: end;
     display: grid;
     grid-template-columns: 1fr 1fr;
