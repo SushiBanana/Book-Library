@@ -1,9 +1,9 @@
-const myLibrary = []
+const myLibrary = [];
 
 // main
-const addBookButton = document.getElementById("add-book-button") // plus
-const addBookDialog = document.getElementById("add-book-dialog") // dialog
-const books = document.getElementById("books")
+const addBookButton = document.getElementById("add-book-button"); // plus
+const addBookDialog = document.getElementById("add-book-dialog"); // dialog
+const books = document.getElementById("books");
 
 // dialog
 const title = document.getElementById('title').value;
@@ -14,11 +14,10 @@ const currentPage = document.getElementById('current-page').value;
 const bookReadCheck = document.getElementById('read');
 const bookNotReadCheck = document.getElementById('not-read');
 
-const cancel = document.getElementById("cancel")
-const addBookSubmit = document.getElementById("add-book-submit") // dialog submit button
+const cancel = document.getElementById("cancel");
+const addBookSubmit = document.getElementById("add-book-submit"); // dialog submit button
 
 // books
-const addButtonCurrentPage = document.querySelectorAll(".book-page-plus")
 
 function Book(title, author, currentPage, totalPages) {
     this.title = title;
@@ -206,7 +205,9 @@ function createBookContainer(newBook, index) {
 
 function addBookToBooks(myLibrary) {
     for (let i = 0; i < myLibrary.length; i++) {
-        createBookContainer(myLibrary[i], i);
+        if (myLibrary[i] !== undefined) {
+            createBookContainer(myLibrary[i], i);
+        }
     }
 }
 
@@ -246,6 +247,11 @@ bookReadCheck.addEventListener("click", isBookRead);
 
 bookNotReadCheck.addEventListener("click", isBookRead);
 
+function deleteBook(index) {
+    delete myLibrary[index];
+    deleteAllBooks();
+    addBookToBooks(myLibrary);
+}
 
 books.addEventListener("click", function(event) {
 
@@ -261,7 +267,6 @@ books.addEventListener("click", function(event) {
                 currentPage++;
 
                 pageStart.textContent = currentPage;
-                console.log("yes3");
                 incrementCurrentPage(index);
                 console.log(myLibrary);
 
@@ -279,10 +284,34 @@ books.addEventListener("click", function(event) {
                 currentPage--;
 
                 pageStart.textContent = currentPage;
-                console.log("yes3");
                 decrementCurrentPage(index);
-                console.log(myLibrary);
             }
         }
     }
 })
+
+books.addEventListener("click", function(event) {
+    if (event.target.classList.contains("fa-circle-xmark")) {
+        const book = event.target.closest(".book");
+
+        if (book) {
+            const index = book.getAttribute("data-index") ;
+            if (index !== null) {
+                deleteBook(index);
+            }
+        }
+    }
+})
+
+const book1 = new Book("The Da Vinci Code", "Dan Brown", 81, 597);
+myLibrary.push(book1);
+createBookContainer(book1, 0);
+
+const book2 = new Book("Meow : A Novel", "Sam Austen", 56, 375);
+myLibrary.push(book2);
+createBookContainer(book2, 1);
+
+const book3 = new Book("Thinking, Fast and Slow", "Daniel Kahneman", 105, 462);
+myLibrary.push(book3);
+createBookContainer(book3, 2);
+
