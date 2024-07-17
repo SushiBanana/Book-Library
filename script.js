@@ -47,18 +47,18 @@ function createBookObject() {
     const totalPages = document.getElementById('total-pages').value;
     const currentPage = document.getElementById('current-page').value;
 
-    validateInput();
+    if (validateInput()) {
 
-    const newBook = new Book(title, author, currentPage, totalPages);
-
-    addBookToLibrary(newBook);
-    deleteAllBooks();
-    addBookToBooks(myLibrary);
-
-
+        const newBook = new Book(title, author, parseInt(currentPage, 10), parseInt(totalPages, 10));
     
-    clearAllInputFields();
-    console.log(myLibrary);
+        addBookToLibrary(newBook);
+        deleteAllBooks();
+        addBookToBooks(myLibrary);
+    
+        clearAllInputFields();
+    };
+
+
 }
 
 
@@ -77,7 +77,17 @@ function isBookRead() {
     }
 }
 
+function checkIfBookRead(index) {
+    flag = false;
+    if (myLibrary[index].currentPage === myLibrary[index].totalPages) {
+        flag = true;
+        myLibrary[index].isRead = flag;
+    }
+    return true;
+}
+
 function validateInput() {
+    flag = false;
     const title = document.getElementById('title').value;
     const author = document.getElementById('author').value;
     const totalPages = document.getElementById('total-pages').value;
@@ -85,21 +95,23 @@ function validateInput() {
 
     if (!title) {
         alert('Title is required.');
-        return;
+        return flag;
     }
     if (!author) {
         alert('Author is required.');
-        return;
+        return flag;
     }
     if (!totalPages) {
         alert('Total pages is required.');
-        return;
+        return flag;
     }
     if (!currentPage && document.getElementById('current-page').disabled === false) {
         alert('Current page is required.');
-        return;
+        return flag;
     }
 
+    flag = true;
+    return flag;
 }
 
 function clearAllInputFields() {
@@ -212,14 +224,21 @@ function addBookToBooks(myLibrary) {
 }
 
 function incrementCurrentPage(index) {
-    myLibrary[index].currentPage++;
+    if (myLibrary[index].currentPage < myLibrary[index].totalPages) {
+        myLibrary[index].currentPage++;
+        checkIfBookRead(index);
+
+    }
 }
 
 function decrementCurrentPage(index) {
-    myLibrary[index].currentPage--;
+    if (myLibrary[index].currentPage > 0) {
+        myLibrary[index].currentPage--;
+        checkIfBookRead(index);
+
+    }
 }
 
-// Event Listeners
 
 function deleteAllBooks() {
     while(books.firstChild) {
@@ -239,8 +258,11 @@ cancel.addEventListener("click", () => {
 
 
 addBookSubmit.addEventListener("click", () => {
-    createBookObject();
-    addBookDialog.close();
+    if (validateInput()) {
+        createBookObject();
+        addBookDialog.close();
+
+    }
 })
 
 bookReadCheck.addEventListener("click", isBookRead);
@@ -263,12 +285,16 @@ books.addEventListener("click", function(event) {
             const index = book.getAttribute("data-index") ;
             if (index !== null) {
                 const pageStart = book.querySelector(".page-start");
+                const pageEnd = book.querySelector(".page-end");
                 let currentPage = parseInt(pageStart.textContent, 10);
-                currentPage++;
-
+                let totalPages = parseInt(pageEnd.textContent, 10);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    incrementCurrentPage(index);
+                    
+                }
                 pageStart.textContent = currentPage;
-                incrementCurrentPage(index);
-                console.log(myLibrary);
+
 
             }
         }
@@ -281,8 +307,10 @@ books.addEventListener("click", function(event) {
             if (index !== null) {
                 const pageStart = book.querySelector(".page-start");
                 let currentPage = parseInt(pageStart.textContent, 10);
-                currentPage--;
+                if (currentPage > 0) {
+                    currentPage--;
 
+                }
                 pageStart.textContent = currentPage;
                 decrementCurrentPage(index);
             }

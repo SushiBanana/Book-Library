@@ -210,7 +210,21 @@ input {
     border: 2px solid red;
 }
 
+.fa-circle-xmark:hover {
+    color: red;
+    transition: all 0.3s;
+}
+
+.fa-solid.fa-square-plus:hover {
+    color: #1877F2;
+    transition: all 0.3s;
+}
+
 #add-book-submit:hover {
     border: 2px solid rgb(227, 163, 68);
 
+}
+
+button:hover {
+    cursor: pointer;
 }
