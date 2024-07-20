@@ -1,4 +1,5 @@
 const myLibrary = [];
+let currentIndex;
 
 // main
 const addBookButton = document.getElementById("add-book-button"); // plus
@@ -6,6 +7,8 @@ const addBookDialog = document.getElementById("add-book-dialog"); // dialog
 const books = document.getElementById("books");
 
 // dialog
+const dialogTitle = document.getElementById("dialog-title");
+
 const title = document.getElementById('title').value;
 const author = document.getElementById('author').value;
 const totalPages = document.getElementById('total-pages').value;
@@ -22,7 +25,13 @@ const addBookSubmit = document.getElementById("add-book-submit"); // dialog subm
 function Book(title, author, currentPage, totalPages) {
     this.title = title;
     this.author = author;
-    this.currentPage = currentPage;
+
+    if (bookReadCheck.checked) {
+        this.currentPage = totalPages;
+    } else {
+        this.currentPage = currentPage;
+    }
+
     this.totalPages = totalPages;
     this.isRead = isReadYet(currentPage, totalPages)
 }
@@ -35,7 +44,7 @@ function addBookToLibrary(book) {
     myLibrary.push(book);
 }
 
-function isReadYet (pagesRead, totalPages) {
+function isReadYet(pagesRead, totalPages) {
     return pagesRead === totalPages;
 }
 
@@ -61,8 +70,6 @@ function createBookObject() {
 
 }
 
-
-
 function isBookRead() {
     const currentPage = document.getElementById('current-page');
 
@@ -82,6 +89,8 @@ function checkIfBookRead(index) {
     if (myLibrary[index].currentPage === myLibrary[index].totalPages) {
         flag = true;
         myLibrary[index].isRead = flag;
+    } else {
+        myLibrary[index].isRead = flag;
     }
     return true;
 }
@@ -90,8 +99,8 @@ function validateInput() {
     flag = false;
     const title = document.getElementById('title').value;
     const author = document.getElementById('author').value;
-    const totalPages = document.getElementById('total-pages').value;
-    const currentPage = document.getElementById('current-page').value;
+    const totalPages = parseInt(document.getElementById('total-pages').value, 10);
+    const currentPage = parseInt(document.getElementById('current-page').value, 10);
 
     if (!title) {
         alert('Title is required.');
@@ -107,6 +116,10 @@ function validateInput() {
     }
     if (!currentPage && document.getElementById('current-page').disabled === false) {
         alert('Current page is required.');
+        return flag;
+    }
+    if (currentPage > totalPages) {
+        alert('You can\'t read more than the total pages');
         return flag;
     }
 
@@ -154,7 +167,6 @@ function createBookContainer(newBook, index) {
     const buttonMark = document.createElement("button");
     const iMark = document.createElement("i");
 
-
     book.classList.add("book");
     book.setAttribute("data-index", index);
     header.classList.add("header");
@@ -173,10 +185,8 @@ function createBookContainer(newBook, index) {
     buttonContainer.classList.add("button-container");
     buttonEdit.classList.add("edit");
     iEdit.classList.add("fa-regular", "fa-pen-to-square");
-    buttonMark.classList.add("mark");
-    iMark.classList.add("fa-regular", "fa-envelope");
+    buttonMark.classList.add("envelope-mark");
     
-
     h3.textContent = newBook.title;
     bookAuthor.textContent = newBook.author;
     pageStart.textContent = newBook.currentPage;
@@ -184,6 +194,11 @@ function createBookContainer(newBook, index) {
     pageEnd.textContent = newBook.totalPages;
     bookRead.textContent = "pages read";
 
+    if (newBook.isRead) {
+        iMark.classList.add("fa-solid", "fa-envelope-circle-check");
+    } else {
+        iMark.classList.add("fa-regular", "fa-envelope");
+    }
 
     buttonEdit.appendChild(iEdit);
     buttonMark.appendChild(iMark);
@@ -212,7 +227,6 @@ function createBookContainer(newBook, index) {
     book.appendChild(buttonContainer);
 
     books.appendChild(book);
-
 }
 
 function addBookToBooks(myLibrary) {
@@ -227,7 +241,6 @@ function incrementCurrentPage(index) {
     if (myLibrary[index].currentPage < myLibrary[index].totalPages) {
         myLibrary[index].currentPage++;
         checkIfBookRead(index);
-
     }
 }
 
@@ -235,10 +248,8 @@ function decrementCurrentPage(index) {
     if (myLibrary[index].currentPage > 0) {
         myLibrary[index].currentPage--;
         checkIfBookRead(index);
-
     }
 }
-
 
 function deleteAllBooks() {
     while(books.firstChild) {
@@ -246,35 +257,102 @@ function deleteAllBooks() {
     }
 }
 
-
-addBookButton.addEventListener("click", () => {
-    
-    addBookDialog.showModal();
-})
-
-cancel.addEventListener("click", () => {
-    addBookDialog.close();
-})
-
-
-addBookSubmit.addEventListener("click", () => {
-    if (validateInput()) {
-        createBookObject();
-        addBookDialog.close();
-
-    }
-})
-
-bookReadCheck.addEventListener("click", isBookRead);
-
-bookNotReadCheck.addEventListener("click", isBookRead);
-
 function deleteBook(index) {
     delete myLibrary[index];
     deleteAllBooks();
     addBookToBooks(myLibrary);
 }
 
+function editBook(index) {
+    const currentPage = document.getElementById('current-page');
+
+    changeModalDetailsUpdate();
+    const book = myLibrary[index];
+
+    document.getElementById('title').value = book.title;
+    document.getElementById('author').value = book.author;
+    document.getElementById('total-pages').value = book.totalPages;
+    document.getElementById('current-page').value = book.currentPage;
+
+    if (book.isRead) {
+        bookReadCheck.checked = true;
+        currentPage.disabled = true;
+    }
+
+    addBookDialog.showModal();
+}
+
+function changeModalDetailsUpdate() {
+    addBookSubmit.classList.add("update");
+    dialogTitle.textContent = "Update Book Details";
+    addBookSubmit.textContent = "Update Book";
+}
+
+function changeModalDetailsAdd() {
+    dialogTitle.textContent = "Add New Book";
+    addBookSubmit.textContent = "Add Book";
+}
+
+function updateBookDetails(book) {
+    let title = document.getElementById('title').value;
+    let author = document.getElementById('author').value;
+    let totalPages = document.getElementById('total-pages').value;
+    let currentPage = document.getElementById('current-page').value;
+
+    book.title = title;
+    book.author = author;
+    book.totalPages = parseInt(totalPages, 10);
+
+    if (bookReadCheck.checked || isReadYet(currentPage, totalPages)) {
+        book.currentPage = parseInt(totalPages, 10);
+        book.isRead = true;
+    } else {
+        book.currentPage = parseInt(currentPage, 10);
+        book.isRead = false;
+    }
+
+}
+
+function changeEnvelopeStatus(index) {
+    const book = myLibrary[index];
+    book.isRead = true;
+    book.currentPage = book.totalPages;
+    deleteAllBooks();
+    addBookToBooks(myLibrary);
+}
+
+addBookButton.addEventListener("click", () => {
+    changeModalDetailsAdd();
+    addBookDialog.showModal();
+})
+
+cancel.addEventListener("click", () => {
+    clearAllInputFields();
+    addBookDialog.close();
+})
+
+addBookSubmit.addEventListener("click", (e) => {
+    if (!addBookSubmit.classList.contains("update")) {
+        if (validateInput()) {
+            createBookObject();
+            addBookDialog.close();
+        }
+    } else {
+        updateBookDetails(myLibrary[currentIndex]);
+        addBookDialog.close();
+        deleteAllBooks();
+        addBookToBooks(myLibrary);
+        clearAllInputFields();
+
+    }
+    
+})
+
+bookReadCheck.addEventListener("click", isBookRead);
+
+bookNotReadCheck.addEventListener("click", isBookRead);
+
+// increments / decrements currentPage
 books.addEventListener("click", function(event) {
 
     if (event.target.classList.contains("fa-square-plus")) {
@@ -291,11 +369,8 @@ books.addEventListener("click", function(event) {
                 if (currentPage < totalPages) {
                     currentPage++;
                     incrementCurrentPage(index);
-                    
                 }
                 pageStart.textContent = currentPage;
-
-
             }
         }
     
@@ -318,6 +393,7 @@ books.addEventListener("click", function(event) {
     }
 })
 
+// deletes book
 books.addEventListener("click", function(event) {
     if (event.target.classList.contains("fa-circle-xmark")) {
         const book = event.target.closest(".book");
@@ -327,6 +403,36 @@ books.addEventListener("click", function(event) {
             if (index !== null) {
                 deleteBook(index);
             }
+        }
+    }
+})
+
+// prompts modal to edit book properties
+books.addEventListener("click", function(event) {
+    if (event.target.classList.contains("fa-pen-to-square")) {
+        const book = event.target.closest(".book")
+        if (book) {
+            const index = book.getAttribute("data-index") 
+            if (index !== null) {
+                currentIndex = index;
+                editBook(index);
+            }
+            
+        }
+    }
+})
+
+// mark as read
+books.addEventListener("click", function(event) {
+    if (event.target.classList.contains("fa-envelope")) {
+        const book = event.target.closest(".book")
+        if (book) {
+            const index = book.getAttribute("data-index") 
+            if (index !== null) {
+                currentIndex = index;
+                changeEnvelopeStatus(index);
+            }
+            
         }
     }
 })

@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Poppins';
-    src: url(/font/Poppins-Regular.ttf);
+    src: url("font/Poppins-Regular.ttf") format('truetype');
 }
 
 html, body {
@@ -90,7 +90,7 @@ main {
     
 }
 
-.mark {
+.envelope-mark {
     justify-self: end;
     font-size: 2rem;
     margin: 5px;
@@ -180,7 +180,7 @@ input {
     height: min-content;
 }
 
-.dialog-title {
+#dialog-title {
     grid-area: 1 / 1 / 2 / 3;
     margin: 0;
 }
@@ -221,8 +221,7 @@ input {
 }
 
 #add-book-submit:hover {
-    border: 2px solid rgb(227, 163, 68);
-
+    border: 2px solid rgb(29, 201, 29);
 }
 
 button:hover {
